@@ -12,4 +12,8 @@ public interface ProductRepository {
 
     List<Product> findByNameContaining(String name);
 
+    Product update(Product product);
+
+    void delete(Long id);
+
 }

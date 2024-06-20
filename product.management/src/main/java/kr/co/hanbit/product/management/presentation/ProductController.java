@@ -41,4 +41,20 @@ public class ProductController {
         return productService.findByNameContaining(name);
     }
 
+    @RequestMapping(value = "/products/{id}", method = RequestMethod.PUT)
+    public ProductDto updateProduct(
+            @PathVariable Long id,
+            @RequestBody ProductDto productDto
+    ) {
+        productDto.setId(id);
+
+        return productService.updateProduct(productDto);
+    }
+
+    @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE)
+    public void deleteProduct(
+            @PathVariable Long id
+    ) {
+        productService.deleteProduct(id);
+    }
 }

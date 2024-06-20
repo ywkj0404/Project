@@ -42,4 +42,18 @@ public class ListProductRepository implements ProductRepository {
                 .toList();
     }
 
+    @Override
+    public Product update(Product product) {
+        Integer indexToModify = productList.indexOf(product);
+        productList.set(indexToModify, product);
+
+        return product;
+    }
+
+    @Override
+    public void delete(Long id) {
+        Product product = findById(id);
+        productList.remove(product);
+    }
+
 }
