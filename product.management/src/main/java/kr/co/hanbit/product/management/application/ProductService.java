@@ -14,18 +14,22 @@ public class ProductService {
 
     private ProductRepository productRepository;
     private ModelMapper modelMapper;
+    private ValidationService validationService;
 
     @Autowired
     public ProductService(
             ProductRepository productRepository,
-            ModelMapper modelMapper
+            ModelMapper modelMapper,
+            ValidationService validationService
     ) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
+        this.validationService = validationService;
     }
 
     public ProductDto createProduct(ProductDto productDto) {
         Product product = modelMapper.map(productDto, Product.class);
+        validationService.checkValid(product);
         Product savedProduct = productRepository.save(product);
         ProductDto savedProductDto = modelMapper.map(savedProduct, ProductDto.class);
 
@@ -59,6 +63,7 @@ public class ProductService {
 
     public ProductDto updateProduct(ProductDto productDto) {
         Product product = modelMapper.map(productDto, Product.class);
+        validationService.checkValid(product);
         Product updatedProduct = productRepository.update(product);
         ProductDto updatedproductDto = modelMapper.map(updatedProduct, ProductDto.class);
 

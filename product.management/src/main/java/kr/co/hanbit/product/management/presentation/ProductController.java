@@ -1,5 +1,6 @@
 package kr.co.hanbit.product.management.presentation;
 
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import kr.co.hanbit.product.management.application.ProductService;
 import kr.co.hanbit.product.management.domian.Product;
@@ -19,7 +20,7 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/products", method = RequestMethod.POST)
-    public ProductDto createProduct(@RequestBody ProductDto productDto) {
+    public ProductDto createProduct(@Valid @RequestBody ProductDto productDto) {
         ProductDto createdProductDto = productService.createProduct(productDto);
 
         return createdProductDto;
