@@ -22,4 +22,24 @@ public class ListProductRepository implements ProductRepository {
         return product;
     }
 
+    @Override
+    public Product findById(Long id) {
+        return productList.stream()
+                .filter(product -> product.sameId(id))
+                .findFirst()
+                .orElseThrow();
+    }
+
+    @Override
+    public List<Product> findAll() {
+        return productList;
+    }
+
+    @Override
+    public List<Product> findByNameContaining(String name) {
+        return productList.stream()
+                .filter(product -> product.containsName(name))
+                .toList();
+    }
+
 }

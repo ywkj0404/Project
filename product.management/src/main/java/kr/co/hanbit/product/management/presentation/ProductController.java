@@ -1,11 +1,12 @@
 package kr.co.hanbit.product.management.presentation;
 
+import jakarta.websocket.server.PathParam;
 import kr.co.hanbit.product.management.application.ProductService;
+import kr.co.hanbit.product.management.domian.Product;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class ProductController {
@@ -22,6 +23,22 @@ public class ProductController {
         ProductDto createdProductDto = productService.createProduct(productDto);
 
         return createdProductDto;
+    }
+
+    @RequestMapping(value = "/products/{id}", method = RequestMethod.GET)
+    public ProductDto findById(
+            @PathVariable Long id
+    ) {
+        return productService.findById(id);
+    }
+
+    @RequestMapping(value = "/products", method = RequestMethod.GET)
+    public List<ProductDto> findProduct(
+            @RequestParam(required = false) String name
+    ) {
+        if(name == null) return productService.findAll();
+
+        return productService.findByNameContaining(name);
     }
 
 }

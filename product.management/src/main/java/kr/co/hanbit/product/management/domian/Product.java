@@ -11,4 +11,12 @@ public class Product {
         this.id = id;
     }
 
+    public boolean sameId(Long id) {
+        return this.id.equals(id);
+    }
+
+    public boolean containsName(String name) {
+        return this.name.contains(name);
+    }
+
 }
