@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ShortenUrlService {
 
@@ -30,6 +32,24 @@ public class ShortenUrlService {
         ShortenUrlDto savedShortenUrlDto = modelMapper.map(savedShortenUrl, ShortenUrlDto.class);
 
         return savedShortenUrlDto;
+    }
+
+    public List<ShortenUrlDto> findAll() {
+        List<ShortenUrl> shortenUrlList = mapShortenUrlRepository.findAll();
+        List<ShortenUrlDto> shortenUrlDtoList = shortenUrlList.stream()
+                .map(shortenUrl -> modelMapper.map(shortenUrl, ShortenUrlDto.class))
+                .toList();
+
+        return shortenUrlDtoList;
+    }
+
+    public List<ShortenUrlDto> findByShortenKey(String shortenKey) {
+        List<ShortenUrl> shortenUrlList = mapShortenUrlRepository.findByShortenKey(shortenKey);
+        List<ShortenUrlDto> shortenUrlDtoList = shortenUrlList.stream()
+                .map(shortenUrl -> modelMapper.map(shortenUrl, ShortenUrlDto.class))
+                .toList();
+
+        return shortenUrlDtoList;
     }
 
 }
