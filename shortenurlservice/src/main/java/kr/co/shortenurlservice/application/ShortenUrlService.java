@@ -1,5 +1,7 @@
 package kr.co.shortenurlservice.application;
 
+import kr.co.shortenurlservice.domain.KeyNotFoundException;
+import kr.co.shortenurlservice.domain.LackOfShortenUrlKeyException;
 import kr.co.shortenurlservice.domain.ShortenUrl;
 import kr.co.shortenurlservice.infrastructure.MapShortenUrlRepository;
 import kr.co.shortenurlservice.presentation.Dto.ShortenUrlCreateRequestDto;
@@ -26,12 +28,22 @@ public class ShortenUrlService {
     }
 
     public ShortenUrlDto createShortenKey(ShortenUrlCreateRequestDto shortenUrlCreateRequestDto) {
-        ShortenUrlDto shortenUrlDto = new ShortenUrlDto(shortenUrlCreateRequestDto);
+        String shortenKey = validShortenKey();
+        ShortenUrlDto shortenUrlDto = new ShortenUrlDto(shortenUrlCreateRequestDto, shortenKey);
         ShortenUrl shortenUrl = modelMapper.map(shortenUrlDto, ShortenUrl.class);
         ShortenUrl savedShortenUrl = mapShortenUrlRepository.save(shortenUrl);
         ShortenUrlDto savedShortenUrlDto = modelMapper.map(savedShortenUrl, ShortenUrlDto.class);
 
         return savedShortenUrlDto;
+    }
+
+    public String redirectOriginalUrl(String shortenKey) {
+        ShortenUrlDto shortenUrlDto = findByShortenKey(shortenKey);
+        shortenUrlDto.setRedirectCount(shortenUrlDto.getRedirectCount() + 1L);
+        ShortenUrl shortenUrl = modelMapper.map(shortenUrlDto, ShortenUrl.class);
+        mapShortenUrlRepository.save(shortenUrl);
+
+        return shortenUrlDto.getOriginalUrl();
     }
 
     public List<ShortenUrlDto> findAll() {
@@ -43,13 +55,35 @@ public class ShortenUrlService {
         return shortenUrlDtoList;
     }
 
-    public List<ShortenUrlDto> findByShortenKey(String shortenKey) {
-        List<ShortenUrl> shortenUrlList = mapShortenUrlRepository.findByShortenKey(shortenKey);
-        List<ShortenUrlDto> shortenUrlDtoList = shortenUrlList.stream()
-                .map(shortenUrl -> modelMapper.map(shortenUrl, ShortenUrlDto.class))
-                .toList();
+    public ShortenUrlDto findByShortenKey(String shortenKey) {
+        ShortenUrl shortenUrl = mapShortenUrlRepository.findByShortenKey(shortenKey);
 
-        return shortenUrlDtoList;
+        if(shortenUrl != null) {
+            ShortenUrlDto shortenUrlDto = modelMapper.map(shortenUrl, ShortenUrlDto.class);
+            return shortenUrlDto;
+        } else {
+            throw new KeyNotFoundException();
+        }
+
+    }
+
+    public String validShortenKey() {
+        String shortenKey = "";
+
+        for (int i = 0; i < 10; i++) {
+            shortenKey = ShortenUrlDto.createShortenKey();
+
+            if (!mapShortenUrlRepository.containingKey(shortenKey)) {
+                break;
+            } else {
+                shortenKey = null;
+            }
+        }
+
+        if(shortenKey != null)
+            return shortenKey;
+        else
+            throw new LackOfShortenUrlKeyException();
     }
 
 }

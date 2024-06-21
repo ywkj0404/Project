@@ -27,8 +27,12 @@ public class MapShortenUrlRepository {
         return shortenUrlList;
     }
 
-    public List<ShortenUrl> findByShortenKey(String shortenKey) {
-        return null;
+    public ShortenUrl findByShortenKey(String shortenKey) {
+        return shortenUrlMap.get(shortenKey);
+    }
+
+    public boolean containingKey(String shortenKey) {
+        return shortenUrlMap.containsKey(shortenKey);
     }
 
 }

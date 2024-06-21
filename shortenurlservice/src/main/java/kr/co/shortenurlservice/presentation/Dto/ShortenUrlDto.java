@@ -20,11 +20,15 @@ public class ShortenUrlDto {
         return redirectCount;
     }
 
+    public void setRedirectCount(Long redirectCount) {
+        this.redirectCount = redirectCount;
+    }
+
     public ShortenUrlDto() {}
 
-    public ShortenUrlDto(ShortenUrlCreateRequestDto shortenUrlCreateRequestDto) {
+    public ShortenUrlDto(ShortenUrlCreateRequestDto shortenUrlCreateRequestDto, String shortenKey) {
         this.originalUrl = shortenUrlCreateRequestDto.getOriginalUrl();
-        this.shortenKey = createShortenKey();
+        this.shortenKey = shortenKey;
         this.redirectCount = 0L;
     }
 
@@ -34,7 +38,7 @@ public class ShortenUrlDto {
         StringBuilder shortenKey = new StringBuilder();
 
         for(int count = 0; count < 8; count++) {
-            Integer base56CharacterSetIndex = random.nextInt(0, base56CharacterSet.length());
+            int base56CharacterSetIndex = random.nextInt(0, base56CharacterSet.length());
             char base56Character = base56CharacterSet.charAt(base56CharacterSetIndex);
 
             shortenKey.append(base56Character);
